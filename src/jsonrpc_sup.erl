@@ -5,7 +5,7 @@
 %% API
 -export([start_link/0]).
 
-%% Supervisor callbacks
+%% supervisor callbacks
 -export([init/1]).
 
 start_link() ->

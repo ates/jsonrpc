@@ -1,0 +1,6 @@
+{application, jsonrpc, [
+    {description, "JSON RPC"},
+    {vsn, "0.0.1"},
+    {applications, [kernel, stdlib, gun, jsx]},
+    {mod, {jsonrpc_app, []}}
+]}.

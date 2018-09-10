@@ -1,4 +1,4 @@
--module(jsonrpc_client).
+-module(jsonrpc_http_client).
 
 -behaviour(gen_server).
 
@@ -29,7 +29,7 @@
 -export_type([opts/0]).
 
 -record(state, {
-    id = 1 :: pos_integer(),
+    id = 0 :: non_neg_integer(),
     pid    :: undefined | pid(),
     opts   :: map()
 }).
@@ -46,15 +46,9 @@ handle_call({make_req, Method, Params}, _From, #state{opts = #{uri := URI}} = St
         {<<"accept">>, <<"application/json">>},
         {<<"content-type">>, <<"application/json">>}
     ],
-    NewId = State#state.id + 1,
-    Request = #{
-        json_rpc => <<"2.0">>,
-        id       => NewId,
-        method   => atom_to_binary(Method, latin1),
-        params   => Params
-    },
-    StreamRef = gun:post(State#state.pid, URI, Headers, jsx:encode(Request)),
-    {reply, wait_for_response(StreamRef, State), State#state{id = NewId}};
+    Request = jsonrpc:format_request(State#state.id, Method, Params),
+    StreamRef = gun:post(State#state.pid, URI, Headers, Request),
+    {reply, wait_for_response(StreamRef, State), State#state{id = State#state.id + 1}};
 
 handle_call({make_get_req, URI}, _From, State) ->
     StreamRef = gun:get(State#state.pid, URI),

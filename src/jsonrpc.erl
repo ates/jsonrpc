@@ -19,7 +19,7 @@ make_get_req(Pid, URI) ->
 make_get_req(Pid, URI, Timeout) ->
     gen_server:call(Pid, {make_get_req, URI}, Timeout).
 
--spec format_request(Id :: non_neg_integer(), Method :: atom(), Params :: map()) -> binary().
+-spec format_request(Id :: non_neg_integer(), Method :: atom(), Params :: map() | list()) -> binary().
 format_request(Id, Method, Params) ->
     jsx:encode(#{
         json_rpc => <<"2.0">>,

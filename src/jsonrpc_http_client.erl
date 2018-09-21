@@ -11,7 +11,6 @@
 -export([handle_cast/2]).
 -export([handle_continue/2]).
 -export([handle_info/2]).
--export([code_change/3]).
 -export([terminate/2]).
 
 -type opts() :: #{
@@ -80,8 +79,6 @@ handle_info({'EXIT', _Pid, Reason}, State) ->
     {noreply, State, {continue, start_gun}};
 
 handle_info(_Msg, State) -> {noreply, State}.
-
-code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
 terminate(_Reason, #state{pid = Pid} = _State) ->
     case is_pid(Pid) of

@@ -10,6 +10,7 @@
 -export([handle_call/3]).
 -export([handle_cast/2]).
 -export([handle_continue/2]).
+-export([handle_info/2]).
 -export([terminate/2]).
 
 -type opts() :: #{
@@ -76,6 +77,8 @@ handle_continue(connect, #state{opts = #{retry_timeout := RetryTimeout}} = State
             timer:sleep(RetryTimeout),
             {noreply, State, {continue, connect}}
     end.
+
+handle_info(_Msg, State) -> {noreply, State}.
 
 terminate(_Reason, #state{socket = Socket} = _State) ->
     case is_port(Socket) of

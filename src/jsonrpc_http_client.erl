@@ -27,6 +27,11 @@
 
 -export_type([opts/0]).
 
+-define(HEADERS, [
+    {<<"accept">>, <<"application/json">>},
+    {<<"content-type">>, <<"application/json">>}
+]).
+
 -record(state, {
     id = 0 :: non_neg_integer(),
     pid    :: undefined | pid(),
@@ -41,19 +46,19 @@ init(Args) ->
     {ok, #state{opts = make_opts(Args)}, {continue, start_gun}}.
 
 handle_call({make_req, Method, Params}, _From, #state{opts = #{uri := URI}} = State) ->
-    Headers = [
-        {<<"accept">>, <<"application/json">>},
-        {<<"content-type">>, <<"application/json">>}
-    ],
     Request = jsonrpc:format_request(State#state.id, Method, Params),
-    StreamRef = gun:post(State#state.pid, URI, Headers, Request),
+    StreamRef = gun:post(State#state.pid, URI, ?HEADERS, Request),
     {reply, wait_for_response(StreamRef, State), State#state{id = State#state.id + 1}};
 
 handle_call({make_get_req, URI}, _From, State) ->
     StreamRef = gun:get(State#state.pid, URI),
     {reply, wait_for_response(StreamRef, State), State};
 
-handle_call(_Req, _From, State) -> {reply, ok, State}.
+handle_call({make_batch_req, Method, Params}, _From, #state{opts = #{uri := URI}} = State) ->
+    Request = jsonrpc:format_batch_request(State#state.id, Method, Params),
+    StreamRef = gun:post(State#state.pid, URI, ?HEADERS, Request),
+    {reply, wait_for_response(StreamRef, State), State#state{id = State#state.id + length(Params)}}.
+
 handle_cast(_Request, State) -> {noreply, State}.
 
 handle_continue(start_gun, State) ->

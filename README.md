@@ -20,7 +20,7 @@ keepalive|non_neg_integer() or infinity|infinity|Time between pings in milliseco
 #### How to use
 
 ```
-{ok, Pid} = jsonrpc_http_client:start_link(#{ip => "localhost", port => 7341}).
+{ok, Pid} = jsonrpc_http_client:start_link(#{ip => "localhost", port => 8545}).
 
 jsonrpc:make_req(Pid, f_blocks_list_json, #{height => 7}).
 ```

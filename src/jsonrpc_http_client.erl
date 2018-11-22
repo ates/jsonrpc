@@ -14,7 +14,7 @@
 -export([terminate/2]).
 
 -type opts() :: #{
-    ip               := inet:ip_address(),
+    ip               := string(),
     port             := inet:port_number(),
     uri              => binary(),
     response_timeout => non_neg_integer(),
@@ -71,16 +71,16 @@ handle_continue(start_gun, State) ->
     erlang:link(Pid),
     {noreply, State#state{pid = Pid}}.
 
-handle_info({gun_up, _Pid, http}, State) ->
-    logger:info("connection is up"),
+handle_info({gun_up, _Pid, http}, #state{opts = #{ip := IP, port := Port}} = State) ->
+    logger:info("connection is established, peer: ~s:~p", [IP, Port]),
     {noreply, State};
 
-handle_info({gun_down, _Pid, http, Reason, _Killed, _Unprocessed}, State) ->
-    logger:info("connection is terminated, reason: ~p", [Reason]),
+handle_info({gun_down, _Pid, http, Reason, _Killed, _Unprocessed}, #state{opts = #{ip := IP, port := Port}} = State) ->
+    logger:info("connection is terminated, peer: ~s:~p, reason: ~p", [IP, Port, Reason]),
     {noreply, State};
 
-handle_info({'EXIT', _Pid, Reason}, State) ->
-    logger:error("connection is terminated, reason: ~p", [Reason]),
+handle_info({'EXIT', _Pid, Reason}, #state{opts = #{ip := IP, port := Port}} = State) ->
+    logger:error("connection is terminated, peer: ~s:~p, reason: ~p", [IP, Port, Reason]),
     {noreply, State, {continue, start_gun}};
 
 handle_info(_Msg, State) -> {noreply, State}.

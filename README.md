@@ -7,7 +7,7 @@
 
 Name|Type|Default|Description
 ----|----|-------|-----------
-ip|inet:ip_address()||IP used to connect to
+ip|string()||IP used to connect to
 port|inet:port_number()||Port to connect to
 uri|binary()|<<"/json_rpc">>|URI used for requests
 response_timeout|non_neg_integer()|5000|How long wait response from server in milliseconds

@@ -31,19 +31,19 @@ make_batch_req(Pid, Method, Params, Timeout) ->
 -spec format_request(Id :: non_neg_integer(), Method :: atom(), Params :: map() | list()) -> binary().
 format_request(Id, Method, Params) ->
     jsx:encode(#{
-        json_rpc => <<"2.0">>,
-        id       => Id,
-        method   => Method,
-        params   => Params
+        jsonrpc => <<"2.0">>,
+        id      => Id,
+        method  => Method,
+        params  => Params
     }).
 
 format_batch_request(Id, Method, Params) ->
     F = fun(Param, {N, Acc}) ->
         Request = #{
-            json_rpc => <<"2.0">>,
-            id       => N,
-            method   => Method,
-            params   => Param
+            jsonrpc => <<"2.0">>,
+            id      => N,
+            method  => Method,
+            params  => Param
         },
         {N + 1, [Request | Acc]}
     end,

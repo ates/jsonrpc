@@ -9,6 +9,7 @@
 -export([make_batch_req/4]).
 -export([format_request/3]).
 -export([format_batch_request/3]).
+-export([is_connected/1]).
 
 make_req(Pid, Method, Params) ->
     make_req(Pid, Method, Params, 5000).
@@ -49,3 +50,6 @@ format_batch_request(Id, Method, Params) ->
     end,
     {_N, Batch} = lists:foldl(F, {Id, []}, Params),
     jsx:encode(Batch).
+
+is_connected(Pid) ->
+    element(5, sys:get_state(Pid)).

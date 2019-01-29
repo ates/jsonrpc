@@ -33,9 +33,10 @@
 ]).
 
 -record(state, {
-    id = 0 :: non_neg_integer(),
-    pid    :: undefined | pid(),
-    opts   :: map()
+    id = 0            :: non_neg_integer(),
+    pid               :: undefined | pid(),
+    opts = #{}        :: map(),
+    connected = false :: boolean()
 }).
 
 start_link(Args) ->
@@ -73,15 +74,15 @@ handle_continue(start_gun, State) ->
 
 handle_info({gun_up, _Pid, http}, #state{opts = #{ip := IP, port := Port}} = State) ->
     logger:info("connection is established, peer: ~s:~p", [IP, Port]),
-    {noreply, State};
+    {noreply, State#state{connected = true}};
 
 handle_info({gun_down, _Pid, http, Reason, _Killed, _Unprocessed}, #state{opts = #{ip := IP, port := Port}} = State) ->
     logger:info("connection is terminated, peer: ~s:~p, reason: ~p", [IP, Port, Reason]),
-    {noreply, State};
+    {noreply, State#state{connected = false}};
 
 handle_info({'EXIT', _Pid, Reason}, #state{opts = #{ip := IP, port := Port}} = State) ->
     logger:error("connection is terminated, peer: ~s:~p, reason: ~p", [IP, Port, Reason]),
-    {noreply, State, {continue, start_gun}};
+    {noreply, State#state{connected = false}, {continue, start_gun}};
 
 handle_info(_Msg, State) -> {noreply, State}.
 

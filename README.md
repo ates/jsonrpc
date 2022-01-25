@@ -22,7 +22,14 @@ keepalive|non_neg_integer() or infinity|infinity|Time between pings in milliseco
 ```
 {ok, Pid} = jsonrpc_http_client:start_link(#{ip => "localhost", port => 8545}).
 
-jsonrpc:make_req(Pid, f_blocks_list_json, #{height => 7}).
+jsonrpc:make_req(Pid, eth_getBalance, [<<"0xd3CdA913deB6f67967B99D67aCDFa1712C293601">>, latest]).
+{ok,#{id => 7,jsonrpc => <<"2.0">>, result => <<"0x18d809bef21b94d4">>}}
+
+jsonrpc:make_req(Pid, eth_blockNumber, []).
+{ok,#{id => 2,jsonrpc => <<"2.0">>,result => <<"0xd6c8b4">>}}
+
+5> jsonrpc:make_req(Pid, eth_chainId, []).
+{ok,#{id => 3,jsonrpc => <<"2.0">>,result => <<"0x1">>}}
 ```
 
 ### JSON-RPC TCP client

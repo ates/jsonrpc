@@ -117,7 +117,7 @@ send(Socket, Request) ->
             true -> ok
         end
     catch
-        _:Reason ->
+        _:Reason:_Stack ->
             {error, Reason}
     end.
 
@@ -125,7 +125,7 @@ make_opts(#{ip := IP, port := Port} = Args) ->
     #{
         ip            => IP,
         port          => Port,
-		oneshot		  => maps:get(oneshot, Args, false),
+        oneshot       => maps:get(oneshot, Args, false),
         timeout       => maps:get(response_timeout, Args, 5000),
         retry_timeout => maps:get(retry_timeout, Args, 5000),
         send_timeout  => maps:get(send_timeout, Args, 500)

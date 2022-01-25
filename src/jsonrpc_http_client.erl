@@ -130,7 +130,7 @@ make_opts(#{ip := IP, port := Port} = Args) ->
             retry_timeout   => maps:get(retry_timeout, Args, 5000),
             connect_timeout => maps:get(connect_timeout, Args, 5000),
             http_opts       => #{keepalive => maps:get(keepalive, Args, infinity)},
-            transport_opts  => [
+            tcp_opts  => [
                 {send_timeout, maps:get(send_timeout, Args, 500)}
             ]
         }
